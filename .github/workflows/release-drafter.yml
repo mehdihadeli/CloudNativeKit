@@ -1,0 +1,55 @@
+# https://johanneskonings.dev/github/2021/02/28/github_automatic_releases_and-changelog/
+# https://tiagomichaelsousa.dev/articles/stop-writing-your-changelogs-manually
+name: Release Drafter
+
+env:
+  NBGV_VERSION: 3.10.94
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  update-release-draft:
+    name: Release drafter
+    runs-on: ubuntu-latest
+
+    permissions:
+      # write permission is required to create a github release
+      contents: write
+      pull-requests: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install nbgv CLI
+        run: dotnet tool install --tool-path "$RUNNER_TEMP/nbgv" nbgv --version "$NBGV_VERSION"
+
+      - name: Calculate NBGV release version
+        id: version
+        shell: bash
+        env:
+          NBGV_PATH: ${{ runner.temp }}/nbgv/nbgv
+        # Produces the same preview, RC, or stable version that NuGet publishing uses.
+        run: |
+          version=$(bash .github/scripts/calculate-package-version.sh)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Update Release Draft
+        uses: release-drafter/release-drafter@v7
+        id: semantic
+        with:
+          config-name: release-drafter.yml
+          version: ${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          tag: v${{ steps.version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

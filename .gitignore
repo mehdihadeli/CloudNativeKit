@@ -198,6 +198,11 @@ AutoTest.Net/
 
 # DocProject is a documentation generator add-in
 DocProject/buildhelp/
+
+# VitePress documentation dependencies and generated files
+docs/node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
 DocProject/Help/*.HxT
 DocProject/Help/*.HxC
 DocProject/Help/*.hhc
