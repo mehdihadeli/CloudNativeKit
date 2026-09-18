@@ -263,3 +263,4 @@
     <PackageVersion Include="Scalar.Aspire" Version="0.1.11" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.EventStore" Version="9.6.0" />
   </ItemGroup>
+  </Project>
