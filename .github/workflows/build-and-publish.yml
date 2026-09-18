@@ -1,0 +1,103 @@
+name: Build, test, and publish NuGet packages
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore source projects
+        run: |
+          for project in src/*/*.csproj; do
+            dotnet restore "$project"
+          done
+
+      - name: Restore test projects
+        run: |
+          for project in tests/*/*/*.csproj; do
+            dotnet restore "$project"
+          done
+
+      - name: Build
+        run: |
+          for project in src/*/*.csproj; do
+            dotnet build "$project" --configuration Release --no-restore -p:PublicRelease=true
+          done
+
+      - name: Run unit tests
+        run: |
+          for project in tests/*/*UnitTests/*.csproj; do
+            dotnet test "$project" --configuration Release --no-restore -p:SkipVersion=true -p:RunAnalyzers=false
+          done
+
+      - name: Run integration tests
+        run: |
+          for project in tests/*/*IntegrationTests/*.csproj; do
+            dotnet test "$project" --configuration Release --no-restore -p:SkipVersion=true -p:RunAnalyzers=false
+          done
+
+  publish:
+    name: Publish NuGet package
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    needs: build-test
+    runs-on: ubuntu-latest
+    environment: nuget
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install nbgv CLI
+        run: dotnet tool install --tool-path "$RUNNER_TEMP/nbgv" nbgv
+
+      - name: Calculate package version
+        id: version
+        shell: bash
+        env:
+          NBGV_PATH: ${{ runner.temp }}/nbgv/nbgv
+        # Produces 10.0.0-preview.1.<UTC short date>.<run number>, 10.0.0-rc.N.<UTC short date>.<run number>, or 10.0.0.
+        run: echo "version=$(bash .github/scripts/calculate-package-version.sh)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore source projects
+        run: |
+          for project in src/*/*.csproj; do
+            dotnet restore "$project"
+          done
+
+      - name: Pack CloudNativeKit packages
+        run: |
+          mkdir -p artifacts
+          for project in src/*/*.csproj; do
+            dotnet pack "$project" --configuration Release --no-restore --output artifacts -p:PublicRelease=true -p:PackageVersion="${{ steps.version.outputs.version }}"
+          done
+
+      - name: Publish to NuGet.org
+        run: dotnet nuget push "artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate

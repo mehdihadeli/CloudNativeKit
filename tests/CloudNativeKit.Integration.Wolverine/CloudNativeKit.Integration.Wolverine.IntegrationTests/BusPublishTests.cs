@@ -1,0 +1,1 @@
+namespace CloudNativeKit.Integration.Wolverine.IntegrationTests;
