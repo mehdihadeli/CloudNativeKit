@@ -20,7 +20,7 @@
     <PackageVersion Include="MediatR" Version="14.2.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.1.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
-    <PackageVersion Include="Npgsql" Version="10.0.0-rc.1" />
+    <PackageVersion Include="Npgsql" Version="10.0.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageVersion Include="Testcontainers.Kafka" Version="4.8.1" />
@@ -107,7 +107,7 @@
     <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.12.0-beta.1" />
     <PackageVersion Include="OpenTelemetry.Exporter.Zipkin" Version="1.12.0" />
     <PackageVersion Include="Grafana.OpenTelemetry" Version="1.2.0" />
-    <PackageVersion Include="OpenTelemetry.Api" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.15.3" />
     <PackageVersion Include="Npgsql.OpenTelemetry" Version="9.0.3" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
@@ -203,9 +203,9 @@
     <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
     <PackageVersion Include="Respawn" Version="6.2.1" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
-    <PackageVersion Include="Testcontainers" Version="4.6.0" />
+    <PackageVersion Include="Testcontainers" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.MongoDb" Version="4.8.1" />
-    <PackageVersion Include="Testcontainers.MsSql" Version="4.6.0" />
+    <PackageVersion Include="Testcontainers.MsSql" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.RabbitMq" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.Redis" Version="4.6.0" />
@@ -263,4 +263,3 @@
     <PackageVersion Include="Scalar.Aspire" Version="0.1.11" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.EventStore" Version="9.6.0" />
   </ItemGroup>
-</Project>
