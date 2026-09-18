@@ -205,7 +205,7 @@
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="Testcontainers" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.MongoDb" Version="4.8.1" />
-    <PackageVersion Include="Testcontainers.MsSql" Version="4.6.0" />
+    <PackageVersion Include="Testcontainers.MsSql" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.RabbitMq" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.Redis" Version="4.6.0" />
@@ -263,4 +263,3 @@
     <PackageVersion Include="Scalar.Aspire" Version="0.1.11" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.EventStore" Version="9.6.0" />
   </ItemGroup>
-</Project>
