@@ -11,6 +11,23 @@
   <ItemGroup Label="Build Versioning">
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.94" />
   </ItemGroup>
+  <ItemGroup Label="Common Infrastructure">
+    <PackageVersion Include="Aspire.Hosting.Kafka" Version="9.3.1" />
+    <PackageVersion Include="Confluent.Kafka" Version="2.14.0" />
+    <PackageVersion Include="DotNet.Testcontainers" Version="1.6.0" />
+    <PackageVersion Include="FluentValidation" Version="12.0.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+    <PackageVersion Include="MediatR" Version="14.2.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.1.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
+    <PackageVersion Include="Npgsql" Version="10.0.0-rc.1" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
+    <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
+    <PackageVersion Include="Testcontainers.Kafka" Version="4.8.1" />
+    <PackageVersion Include="WolverineFx.Kafka" Version="6.2.0" />
+    <PackageVersion Include="xunit.v3.assert" Version="3.2.2" />
+    <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />
+  </ItemGroup>
   <ItemGroup Label="Authentication - Identity">
     <PackageVersion Include="AspNetCore.HealthChecks.Elasticsearch" Version="9.0.0" />
     <PackageVersion Include="Duende.AccessTokenManagement.OpenIdConnect" Version="3.2.0" />
@@ -187,10 +204,10 @@
     <PackageVersion Include="Respawn" Version="6.2.1" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="Testcontainers" Version="4.6.0" />
-    <PackageVersion Include="Testcontainers.MongoDb" Version="4.6.0" />
+    <PackageVersion Include="Testcontainers.MongoDb" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.MsSql" Version="4.6.0" />
-    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.6.0" />
-    <PackageVersion Include="Testcontainers.RabbitMq" Version="4.6.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.8.1" />
+    <PackageVersion Include="Testcontainers.RabbitMq" Version="4.8.1" />
     <PackageVersion Include="Testcontainers.Redis" Version="4.6.0" />
     <PackageVersion Include="WebMotions.Fake.Authentication.JwtBearer" Version="9.0.0" />
     <PackageVersion Include="WireMock.Net" Version="1.5.13" />
