@@ -23,6 +23,7 @@ export default defineConfig({
             { text: "Quickstart", link: "/guide/quickstart" },
             { text: "Architecture", link: "/guide/architecture" },
             { text: "Development", link: "/guide/development" },
+            { text: "Versioning and releases", link: "/guide/versioning" },
           ],
         },
       ],
