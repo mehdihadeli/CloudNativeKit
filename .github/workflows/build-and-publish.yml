@@ -1,4 +1,4 @@
-name: Build, test, and publish NuGet packages
+name: Build, test, and publish
 
 on:
   pull_request:
@@ -57,12 +57,13 @@ jobs:
             dotnet test "$project" --configuration Release --no-restore -p:SkipVersion=true -p:RunAnalyzers=false
           done
 
-  publish:
-    name: Publish NuGet package
+  calculate-version:
+    name: Calculate release version
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     needs: build-test
     runs-on: ubuntu-latest
-    environment: nuget
+    outputs:
+      version: ${{ steps.version.outputs.version }}
 
     steps:
       - name: Check out repository
@@ -76,15 +77,37 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Install nbgv CLI
-        run: dotnet tool install --tool-path "$RUNNER_TEMP/nbgv" nbgv
+        run: dotnet tool install --tool-path "$RUNNER_TEMP/nbgv" nbgv --version 3.10.94
 
-      - name: Calculate package version
+      - name: Calculate version
         id: version
         shell: bash
-        env:
-          NBGV_PATH: ${{ runner.temp }}/nbgv/nbgv
-        # Produces 10.0.0-preview.1.<UTC short date>.<run number>, 10.0.0-rc.N.<UTC short date>.<run number>, or 10.0.0.
-        run: echo "version=$(bash .github/scripts/calculate-package-version.sh)" >> "$GITHUB_OUTPUT"
+        run: |
+          version="$($RUNNER_TEMP/nbgv/nbgv get-version -v SemVer2)"
+          echo "Calculated SemVer2 version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  publish:
+    name: Publish packages and release assets
+    if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && contains(needs['calculate-version'].outputs.version, '-preview.'))
+    needs:
+      - build-test
+      - calculate-version
+    runs-on: ubuntu-latest
+    environment: nuget
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
 
       - name: Restore source projects
         run: |
@@ -96,8 +119,21 @@ jobs:
         run: |
           mkdir -p artifacts
           for project in src/*/*.csproj; do
-            dotnet pack "$project" --configuration Release --no-restore --output artifacts -p:PublicRelease=true -p:PackageVersion="${{ steps.version.outputs.version }}"
+            dotnet pack "$project" --configuration Release --no-restore --output artifacts -p:PublicRelease=true -p:PackageVersion="${{ needs['calculate-version'].outputs.version }}"
           done
 
       - name: Publish to NuGet.org
         run: dotnet nuget push "artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Update matching Release Drafter draft
+        if: always()
+        uses: release-drafter/release-drafter@v7
+        with:
+          config-name: release-drafter.yml
+          version: ${{ needs['calculate-version'].outputs.version }}
+          name: v${{ needs['calculate-version'].outputs.version }}
+          tag: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', needs['calculate-version'].outputs.version) }}
+          publish: ${{ startsWith(github.ref, 'refs/tags/v') && !contains(needs['calculate-version'].outputs.version, '-') }}
+          prerelease: ${{ contains(needs['calculate-version'].outputs.version, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

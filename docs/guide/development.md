@@ -24,6 +24,9 @@ Versions come from `version.json` through Nerdbank.GitVersioning. Release builds
 dotnet pack src/CloudNativeKit.Core/CloudNativeKit.Core.csproj -c Release -p:PublicRelease=true
 ```
 
+See [Versioning and releases](./versioning) for the preview, RC, stable, and
+GitHub Actions publication flow.
+
 ## Pull requests
 
 Keep changes focused on one component, add tests in its matching test project, and update documentation when public package behavior changes. Do not introduce a second versioning system or hard-code package versions.
