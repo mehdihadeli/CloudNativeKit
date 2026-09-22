@@ -18,19 +18,30 @@ template: |
 categories:
   - title: 🚀 Features
     when:
-      labels: [feature, feat]
+      labels:
+        - feature
+        - feat
   - title: ♻️ Enhancement
     when:
-      labels: [enhancement, refactor]
+      labels:
+        - enhancement
+        - refactor
   - title: 🐛 Bug Fixes
     when:
-      labels: [fix, bug]
+      labels:
+        - fix
+        - bug
   - title: 👷 CI
     when:
-      labels: [ci, ci-cd, devops]
+      labels:
+        - ci
+        - ci-cd
+        - devops
   - title: ⚠️ Breaking Changes
     when:
-      labels: [breaking-changes, major]
+      labels:
+        - breaking-changes
+        - major
   - title: ⛔️ Deprecated
     when:
       label: deprecated
@@ -48,18 +59,44 @@ categories:
       label: test
   - title: 📄 Documentation
     when:
-      labels: [docs, documentation]
+      labels:
+        - docs
+        - documentation
   - title: 🧩 Dependency Updates
     when:
-      labels: [deps, build, dependencies]
+      labels:
+        - deps
+        - build
+        - dependencies
   - title: 🧰 Maintenance
     when:
       label: chore
-  - title: 🧺 Miscellaneous
+  - title: 🧺 Miscellaneous #Everything except ABAP
     when:
       label: misc
   - title: 🚩 Other changes
-  ## putting no labels pr to `Other Changes` category with no label - https://github.com/release-drafter/release-drafter/issues/139#issuecomment-480473934
+    ## putting no labels pr to `Other Changes` category with no label - https://github.com/release-drafter/release-drafter/issues/139#issuecomment-480473934
+
+  - type: pre-exclude
+    when:
+      label: skip-changelog
+
+  - type: version-resolver
+    semver-increment: major
+    when:
+      labels:
+        - breaking-changes
+        - major
+  - type: version-resolver
+    semver-increment: minor
+    when:
+      label: minor
+  - type: version-resolver
+    semver-increment: patch
+    when:
+      label: patch
+  - type: version-resolver
+    semver-increment: patch
 
 # https://www.trywilco.com/post/wilco-ci-cd-github-heroku
 # https://github.com/release-drafter/release-drafter#autolabeler
@@ -125,17 +162,3 @@ autolabeler:
 
 change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
-version-resolver:
-  - semver-increment: major
-    when:
-      labels: [breaking-changes, major]
-  - semver-increment: minor
-    when:
-      label: minor
-  - semver-increment: patch
-    when:
-      label: patch
-  - semver-increment: patch
-
-exclude-labels:
-  - skip-changelog
