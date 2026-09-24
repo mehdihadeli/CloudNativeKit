@@ -9,10 +9,8 @@ using CloudNativeKit.Core.Messages;
 
 namespace CloudNativeKit.Core.Persistence.EventStore;
 
-public abstract class AggregateStore(
-    IEventStore eventStore,
-    IAggregatesDomainEventsRequestStorage aggregatesDomainEventsStorage
-) : IAggregateStore
+public class AggregateStore(IEventStore eventStore, IAggregatesDomainEventsRequestStorage aggregatesDomainEventsStorage)
+    : IAggregateStore
 {
     public async Task<TAggregate?> GetAsync<TAggregate, TId>(
         TId aggregateId,
