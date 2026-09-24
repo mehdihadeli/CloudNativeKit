@@ -48,12 +48,32 @@ jobs:
       - name: Run unit tests
         run: |
           for project in tests/*/*UnitTests/*.csproj; do
+            project_dir="$(dirname "$project")"
+            mapfile -t test_files < <(find "$project_dir" -maxdepth 1 -name '*.cs' ! -name 'Usings.cs' -print)
+            if [ "${#test_files[@]}" -eq 0 ]; then
+              echo "Skipping $project (no test source files found)"
+              continue
+            fi
+            if ! grep -E -m1 '^\s*\[(Fact|Theory|Test)\b' "${test_files[@]}" > /dev/null; then
+              echo "Skipping $project (no discoverable test attributes found)"
+              continue
+            fi
             dotnet test --project "$project" --configuration Release --no-restore -p:SkipVersion=true -p:RunAnalyzers=false
           done
 
       - name: Run integration tests
         run: |
           for project in tests/*/*IntegrationTests/*.csproj; do
+            project_dir="$(dirname "$project")"
+            mapfile -t test_files < <(find "$project_dir" -maxdepth 1 -name '*.cs' ! -name 'Usings.cs' -print)
+            if [ "${#test_files[@]}" -eq 0 ]; then
+              echo "Skipping $project (no test source files found)"
+              continue
+            fi
+            if ! grep -E -m1 '^\s*\[(Fact|Theory|Test)\b' "${test_files[@]}" > /dev/null; then
+              echo "Skipping $project (no discoverable test attributes found)"
+              continue
+            fi
             dotnet test --project "$project" --configuration Release --no-restore -p:SkipVersion=true -p:RunAnalyzers=false
           done
 
