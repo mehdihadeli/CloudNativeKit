@@ -34,10 +34,10 @@ jobs:
         run: dotnet build CloudNativeKit.slnx --configuration Release --no-restore -p:PublicRelease=true
 
       - name: Run unit tests
-        run: dotnet test --solution CloudNativeKit.UnitTests.sln --configuration Release --no-build --no-restore -p:SkipVersion=true -p:RunAnalyzers=false
+        run: dotnet test --solution CloudNativeKit.UnitTests.slnf --configuration Release --no-build --no-restore -p:SkipVersion=true -p:RunAnalyzers=false
 
       - name: Run integration tests
-        run: dotnet test --solution CloudNativeKit.IntegrationTests.sln --configuration Release --no-build --no-restore -p:SkipVersion=true -p:RunAnalyzers=false
+        run: dotnet test --solution CloudNativeKit.IntegrationTests.slnf --configuration Release --no-build --no-restore -p:SkipVersion=true -p:RunAnalyzers=false
 
   calculate-version:
     name: Calculate release version
