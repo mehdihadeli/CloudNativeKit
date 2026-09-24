@@ -19,6 +19,7 @@ public abstract class Aggregate<TId> : Entity<TId>, IAggregate<TId>
     {
         if (!_uncommittedDomainEvents.Any(x => Equals(x.EventId, domainEvent.EventId)))
         {
+            domainEvent.WithAggregate(Id, _uncommittedDomainEvents.Count);
             _uncommittedDomainEvents.Enqueue(domainEvent);
         }
     }

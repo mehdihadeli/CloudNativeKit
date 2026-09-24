@@ -73,6 +73,7 @@ public abstract class EventSourcedAggregate<TId> : Entity<TId>, IEventSourcedAgg
     {
         if (!_uncommittedDomainEvents.Any(x => Equals(x.EventId, domainEvent.EventId)))
         {
+            domainEvent.WithAggregate(Id, CurrentVersion + 1);
             _uncommittedDomainEvents.Enqueue(domainEvent);
         }
     }
