@@ -2,12 +2,14 @@
 
 CloudNativeKit uses [Nerdbank.GitVersioning (NBGV)](https://dotnet.github.io/Nerdbank.GitVersioning/)
 to version every package from the committed `version.json` file and Git
-history. All packages in a release use the same `SemVer2` version.
+history. All packages in a release use the same `SemVer2` version. CI adds a
+UTC `YYDDD` date and GitHub Actions run number to preview and RC packages for
+traceability; stable packages keep their exact version.
 
 ## Release lifecycle
 
 ```text
-1.0.0-preview.N -> 1.0.0-rc.N -> 1.0.0
+1.0.0-preview.1.YYDDD.RUN_NUMBER -> 1.0.0-rc.1.YYDDD.RUN_NUMBER -> 1.0.0
 ```
 
 `main` is the only long-lived branch. Version changes are reviewed pull
@@ -15,8 +17,8 @@ requests; ordinary pull requests do not change `version.json`.
 
 | Release state            | Action                                        |
 | ------------------------ | --------------------------------------------- |
-| Start or advance preview | Merge a PR prepared with `prepare-preview`    |
-| Start or advance RC      | Merge a PR prepared with `prepare-rc`         |
+| Start a preview train    | Merge a PR prepared with `prepare-train`      |
+| Start an RC train        | Merge a PR prepared with `prepare-rc`         |
 | Declare stable           | Merge a PR prepared with `prepare-stable`     |
 | Publish RC or stable     | Tag the exact approved commit with `nbgv tag` |
 
@@ -26,11 +28,12 @@ Install NBGV once, then use the repository helper:
 
 ```bash
 dotnet tool install --global nbgv
-./release-version.sh prepare-preview 1.0.0
+./release-version.sh prepare-train 1.0.0
 ```
 
-The helper increments the current preview or RC number in `version.json`.
-Commit that change in a pull request. For stabilization and stable release:
+The helper uses NBGV's `{height}` placeholder, so Git history determines the
+preview and RC ordinals. Commit that change in a pull request. For stabilization
+and stable release:
 
 ```bash
 ./release-version.sh prepare-rc 1.0.0
@@ -48,14 +51,17 @@ nbgv get-version -v SemVer2
 `.github/workflows/build-and-publish.yml` checks out full Git history, builds
 all source projects, and runs unit and integration tests. After those checks:
 
-- A preview version on `main` publishes all packages to NuGet.org.
-- An RC or stable `v*` tag publishes all packages to NuGet.org.
-- Release Drafter updates the matching draft in the same job.
-- A pushed RC or stable tag publishes the draft; preview releases remain drafts.
+- The initial `preview.0` commit runs validation but is not published.
+- Later preview versions on `main` publish all packages to NuGet.org as
+  `X.Y.Z-preview.N.YYDDD.RUN_NUMBER`.
+- An RC or stable tag publishes all packages; RC packages use the same suffix,
+  while stable packages use `X.Y.Z`.
+- Release Drafter updates the matching draft; only stable tags publish it.
 
-The workflow passes the NBGV `SemVer2` value to `dotnet pack` as
-`PackageVersion`. It does not add date or run-number suffixes, and it never
-rewrites `version.json` in CI.
+The workflow calculates the release value in `calculate-version.sh`, passes it
+to `dotnet pack` as `PackageVersion`, and never rewrites `version.json` in CI.
+Release tags must be `vMAJOR.MINOR.PATCH` or `vMAJOR.MINOR.PATCH-rc.N` and must
+match the NBGV version calculated for that commit.
 
 ## Publish an approved tag
 
@@ -73,7 +79,7 @@ Use the actual tag printed by `nbgv tag`. The tag triggers the same build and
 test workflow and publishes the matching Release Drafter draft.
 
 After stable publication, begin the next release line with a new preview
-version, for example `./release-version.sh prepare-preview 1.1.0`.
+version, for example `./release-version.sh prepare-train 1.1.0`.
 
 ## Release notes
 
